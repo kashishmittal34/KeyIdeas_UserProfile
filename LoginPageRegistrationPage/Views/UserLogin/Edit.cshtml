@@ -1,0 +1,188 @@
+﻿@model LoginPageRegistrationPage.Models.Register
+
+@{
+    ViewData["Title"] = "UpdateUserProfile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (@ViewBag.Edit != null)
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.Edit
+    </div>
+}
+<style>
+    input.invalid, textarea.invalid{
+	border: 2px solid red;
+}
+
+input.valid, textarea.valid{
+	border: 2px solid green;
+}
+text-danger{
+	display: none;
+	margin-left: 10px;
+}		
+
+.error_show{
+	color: red;
+	margin-left: 10px;
+}
+</style>
+<div class="col-md-10 mx-auto py-4">
+    <div class="card">
+        <div class="card-header bg-primary text-uppercase text-white">
+            <h4>Edit Profile</h4>
+
+            <div class="right-div">
+                @Html.ActionLink("Back to List", "Welcome")
+            </div>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.ID)
+        </div>
+        <div>
+            <form id="contact" asp-action="Edit" asp-controller="UserLogin" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <h3 class="register-heading">Modify Employee</h3>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="FirstName" class="control-label"></label>
+                            <input asp-for="FirstName" class="form-control" id="contact_Firstname"/>
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="LastName" class="control-label"></label>
+                            <input asp-for="LastName" class="form-control" id="contact_Lastname"/>
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Gender" class="control-label"></label>
+                            <select asp-for="Gender" class="form-control" id="contact_Gender">
+                                <option value="">Choose Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                            <span asp-validation-for="Gender" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Email" class="control-label"></label>
+                            <input asp-for="Email" class="form-control" id="contact_Email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="PhoneNumber" class="control-label"></label>
+                            <input asp-for="PhoneNumber" class="form-control" id="contact_Phone"  />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="SecurityQuestion" class="control-label"></label>
+                            <select asp-for="SecurityQuestion" class="form-control" id="contact_SQ">
+                                <option class="hidden" selected disabled>Please select your Security Question</option>
+                                <option>What is your Birthdate?</option>
+                                <option>What is Your old Phone Number</option>
+                                <option>What is your Pet Name?</option>
+                            </select>
+                            <span asp-validation-for="SecurityQuestion" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="SecurityAnwser" class="control-label"></label>
+                            <input asp-for="SecurityAnwser" class="form-control" id="contact_SA" />
+                            <span asp-validation-for="SecurityAnwser" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="ProfileImage" class="control-label"></label>
+                            <div class="custom-file">
+                                <input asp-for="ProfileImage" class="custom-file-input" id="contact_Profile" >
+                                <label class="custom-file-label" for="customFile">Choose file</label>
+                            </div>
+                            <span asp-validation-for="ProfileImage" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Resume" class="control-label"></label>
+                            <div class="custom-file">
+                                <input asp-for="Resume" class="custom-file-input" id="contact_Resume" >
+                                <label class="custom-file-label" for="customFile">Choose file</label>
+                            </div>
+                            <span asp-validation-for="Resume" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div id="Submitbutton" class="form-group">
+                    <input id="button" type="submit" value="Update" class="btn btn-primary" />
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#Submitbutton button").click(function(event) {
+                var form_data = $("#contact").serializeArray();
+                var error_free = true;
+                for (var input in form_data) {
+                    var element = $("#contact_" + form_data[input]['name']);
+                    var valid = element.hasClass("valid");
+                    var error_element = $("span", element.parent());
+                    if (!valid) { error_element.removeClass("text-danger").addClass("error_show"); error_free = false; }
+                    else { error_element.removeClass("error_show").addClass("text-danger"); }
+                }
+                if (!error_free) {
+                    event.preventDefault();
+                }
+                else {
+                    alert('No errors: Form will be submitted');
+                }
+            });
+
+
+        });
+    </script>
+    <script>
+        $(function() {
+            var msg = '@ViewData["result1"]';
+            if (msg == '1') {
+                alert("User Details Updated Successfully");
+                window.location.href = "@Url.Action("Edit", "UserLogin")";
+            }
+        });
+
+    </script>
+    <script type="text/javascript">
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    </script>
+    }
+    

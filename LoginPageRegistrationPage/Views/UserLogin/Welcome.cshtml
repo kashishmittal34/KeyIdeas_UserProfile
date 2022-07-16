@@ -1,0 +1,263 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Mvc;
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model X.PagedList.IPagedList<LoginPageRegistrationPage.Models.Register>
+@{
+    ViewBag.Title = "Welcome";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .ul.pagination {
+        display: inline-block;
+        padding: 0;
+        margin: 0;
+    }
+
+    a.buy {
+        color: #2da1c1;
+        font-size: 20px;
+        text-decoration: none;
+        float: inline-start;
+    }
+
+        a.buy:hover {
+            color: #f90;
+            text-decoration: underline;
+        }
+
+    ul.pagination li {
+        display: inline;
+    }
+
+        ul.pagination li a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
+        }
+
+            ul.pagination li a.active {
+                background-color: #4CAF50;
+                color: white;
+            }
+
+            ul.pagination li a:hover:not(.active) {
+                background-color: #ddd;
+            }
+</style>
+<div class="top-left">
+    @Html.ActionLink("LOG ME OUT", "Logout", "UserLogin", new { @class = "btn btn-danger pull-right" })
+</div>
+<section class="menu-section">
+    <div class="container">
+        <div class="row ">
+            <div class="col-md-12">
+                <div class="navbar-collapse ">
+                    <ul id="menu-top" class="nav navbar-nav navbar-right navbar-header">
+
+
+                        @if (@HttpContextAccessor.HttpContext.Session.GetString("Email") != null)
+                        {
+                            <li><a href="welcome" class="menu-top-active">Welcome @HttpContextAccessor.HttpContext.Session.GetString("Email")</a></li>
+                        }
+
+                    </ul>
+                    <div class="col-md-12">
+                        <div class="card">
+
+                            <form asp-action="Welcome" method="get">
+                                <div class="form-actions no-color">
+                                    <p>
+                                        <b> Search Option: </b>@Html.RadioButton("option", "FirstName") <text>FirstName</text> @Html.RadioButton("option", "LastName") <text> LastName </text>
+                                        @Html.RadioButton("option", "Email")Email
+                                        @Html.TextBox("search")
+
+                                        <input type="submit" value="Search" class="btn btn-default" />
+                                        <a class="buy btn-dark" asp-action="Welcome">
+                                            ResetList
+                                        </a>
+
+                                    </p>
+
+                                </div>
+                            </form>
+                            <form autocomplete="off" asp-controller="UserLogin" asp-antiforgery="true" asp-action="DownloadReport" method="post">
+                                <div class="card-body register-card-body">
+                                    <div class="form-row">
+                                        <button type="submit" id="btnsubmit" class="btn btn-success">Export to Excel</button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<div class="row">
+
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                My Profile
+            </div>
+
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <div style="border:2px solid red; margin-left:auto; margin-right:auto">
+
+                        @if (Model != null)
+                        {
+                            if (Model.Count > 0)
+                            {
+                                <table id="myTable" class="table" style="width:100%" border="1">
+                                    <thead>
+                                        <tr style="grid-auto-columns">
+                                            <th onclick="sortTable(0)">@Html.DisplayNameFor(model=>model.First().ID)</th>
+                                            <th>@Html.DisplayNameFor(model=>model.First().ProfileImage)</th>
+                                            <th onclick="sortTable(1)">@Html.DisplayNameFor(model=>model.First().FirstName)</th>
+                                            <th>@Html.DisplayNameFor(model=>model.First().LastName)</th>
+                                            <th>@Html.DisplayNameFor(model=>model.First().Gender)</th>
+                                            @*<th>@Html.DisplayNameFor(model=>model.First().Password)</th>*@
+                                            <th>@Html.DisplayNameFor(model=>model.First().Email)</th>
+                                            <th>@Html.DisplayNameFor(model=>model.First().PhoneNumber)</th>
+                                            <th>@Html.DisplayNameFor(model=>model.First().SecurityQuestion)</th>
+                                            <th>@Html.DisplayNameFor(model=>model.First().SecurityAnwser)</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+
+                                                <td> @Html.DisplayFor(modelitem => item.ID) </td>
+                                                <td>
+                                                    <img src="~/images/@item.ProfilePicture"
+                                             height="100" width="90"
+                                             asp-append-version="true" />
+                                                </td>
+                                                <td>@Html.DisplayFor(modelitem => item.FirstName)</td>
+                                                <td>@Html.DisplayFor(modelitem => item.LastName)</td>
+                                                <td>@Html.DisplayFor(modelitem => item.Gender)</td>
+                                                @*  <td>@Html.DisplayFor(modelitem => item.Password)</td>*@
+                                                <td>@Html.DisplayFor(modelitem => item.Email) </td>
+                                                <td>@Html.DisplayFor(modelitem => item.PhoneNumber)</td>
+                                                <td>@Html.DisplayFor(modelitem => item.SecurityQuestion)</td>
+                                                <td>@Html.DisplayFor(modelitem => item.SecurityAnwser)</td>
+                                                <td>@Html.ActionLink("Edit", "Edit", new { item.ID})</td>
+                                                <td>@Html.ActionLink("Delete", "Delete", new { item.ID }, new { onclick = "return confirm('Are sure wants to delete?');" })</td>
+
+
+                                            </tr>
+
+                                        }
+
+                                    </thead>
+                                </table>
+
+                            }
+                            else
+                            {
+                                <b>No Details Found.</b>
+                            }
+
+                        }
+                        @if (ViewBag.AlertMsg != null)
+                        {
+
+                            <script type="text/javascript">
+                                window.onload = function() {
+                                    alert("@ViewBag.AlertMsg");
+                                };
+                            </script>
+
+                        }
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="container" style="margin-left: 20px">
+                <p></p>
+                <p></p>
+                <div class="pagination" style="margin-left: 400px">
+                    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber)
+                    of @Model.PageCount @Html.PagedListPager(Model, page => Url.Action("Welcome", new { page})) @*option = HttpContextAccessor.HttpContext.Request.Query["option"],
+                    search = HttpContextAccessor.HttpContext.Request.Query["search"],
+                    sort = HttpContextAccessor.HttpContext.Request.Query["sort"]}))*@
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@section Scripts
+    {
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+    <script src="~/js/bootstrap.js"> </script>
+    <script src="~/js/custom.js"></script>
+    <script src="~/js/jquery-1.10.2.js"></script>
+    <script>
+        function sortTable(n) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById("myTable");
+            switching = true;
+            //Set the sorting direction to ascending:
+            dir = "asc";
+            /*Make a loop that will continue until
+            no switching has been done:*/
+            while (switching) {
+                //start by saying: no switching is done:
+                switching = false;
+                rows = table.rows;
+                /*Loop through all table rows (except the
+                first, which contains table headers):*/
+                for (i = 1; i < (rows.length - 1); i++) {
+                    //start by saying there should be no switching:
+                    shouldSwitch = false;
+                    /*Get the two elements you want to compare,
+                    one from current row and one from the next:*/
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    /*check if the two rows should switch place,
+                    based on the direction, asc or desc:*/
+                    if (dir == "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            //if so, mark as a switch and break the loop:
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            //if so, mark as a switch and break the loop:
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    /*If a switch has been marked, make the switch
+                    and mark that a switch has been done:*/
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    //Each time a switch is done, increase this count by 1:
+                    switchcount++;
+                } else {
+                    /*If no switching has been done AND the direction is "asc",
+                    set the direction to "desc" and run the while loop again.*/
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+    </script>
+    }

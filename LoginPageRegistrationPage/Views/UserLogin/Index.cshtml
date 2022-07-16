@@ -1,0 +1,74 @@
+﻿@model LoginPageRegistrationPage.Models.Register
+
+@{
+    ViewData["Title"] = "Login";
+
+}
+<h4>Login</h4>
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Index" asp-controller="UserLogin" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <h3 class="register-heading">Login as a Employee</h3>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span id="result" asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            @* <div class="form-group">
+            <label asp-for="RememberMe" class="control-label"></label>
+            <input type="checkbox"  asp-for="RememberMe" class="form-control"/>
+            <span asp-validation-for="RememberMe" class="text-danger"></span>
+            </div>*@
+            <div class="alert-danger">  
+                @if (@ViewData["Message"]  != null)  
+                {
+
+                    @ViewData["Message"];
+                }  
+  
+               
+            </div>  
+            <div class="form-group">
+                <input type="submit" value="Login" class="btn btn-primary" />
+            </div>
+            <div class="right-div">
+                @Html.ActionLink("Create New Account", "Index","Registration", new { @class = "btn btn-danger pull-right" })
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $.ajax({
+
+                type: 'POST',
+                URL: '/UserLogin/UserLogin',
+                data: data,
+                dataType: 'JSON',
+                success: function(data) {
+                    datadata = data.status
+                    if (status == "1") {
+                        alert("Either Email or password is Incorrect");
+                        window.location.href = '@Url.Action("Index","UserLogin")';
+                    }
+                }
+            });
+        });
+        $(function() {
+            var msg = '@ViewData["result"]';
+            if (msg == '1') {
+                alert("User Details Inserted Successfully");
+                window.location.href = "@Url.Action("Index","UserLogin")";
+            }
+        });
+    </script>
+}
